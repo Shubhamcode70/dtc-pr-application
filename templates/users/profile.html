@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>My Profile</h1>
+  <p><strong>Name:</strong> {{ request.user.get_full_name|default:request.user.username }}</p>
+  <p><strong>Username:</strong> {{ request.user.username }}</p>
+  <p><strong>Email:</strong> {{ request.user.email }}</p>
+  <p><strong>Role:</strong> {{ user_profile.role.name }}</p>
+  <p><strong>Department:</strong> {{ user_profile.department }}</p>
+  <p><strong>Approver:</strong> {{ user_profile.is_approver|yesno:"Yes,No" }}</p>
+  <p><strong>Approval limit:</strong> {{ user_profile.approval_limit }}</p>
+</div>
+{% endblock %}

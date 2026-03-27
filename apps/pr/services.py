@@ -258,3 +258,31 @@ class ApprovalChainService:
         """Get the applicable approval chain for amount"""
         chains = ApprovalChain.get_applicable_chains(amount, pr_type)
         return chains[0] if chains else None
+
+
+class PRApprovalService:
+    """Backward-compatible wrapper used by legacy views."""
+
+    def create_approval_chain(self, pr, total_value):
+        chain = ApprovalChainService.get_applicable_chain(total_value, pr.pr_type)
+        if chain:
+            pr.approval_chain = chain
+            pr.save(update_fields=['approval_chain', 'updated_at'])
+        return chain
+
+    def update_pr_status(self, pr):
+        """Infer PR status from approval rows."""
+        statuses = list(pr.approvals.values_list('status', flat=True))
+        if any(s == 'rejected' for s in statuses):
+            return 'rejected'
+        if statuses and all(s == 'approved' for s in statuses):
+            return 'approved'
+        return 'pending_approval'
+
+
+class PRGenerationService:
+    """Legacy shim for PR number generation."""
+
+    @staticmethod
+    def generate(pr_type):
+        return PRService.generate_pr_number(pr_type)

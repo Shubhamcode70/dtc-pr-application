@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from decimal import Decimal
 import json
 
-from .models import PurchaseRequisition, PRItem, ApprovalChain, PRApproval
+from .models import PurchaseRequisition, PRItem, ApprovalChain, PRApproval, PRType
 from apps.vendor.models import Vendor, VendorContact
 
 
@@ -19,14 +19,13 @@ class PRHeaderForm(forms.ModelForm):
     class Meta:
         model = PurchaseRequisition
         fields = [
-            'requester_name', 'department', 'purpose_of_requirement',
+            'requester', 'department', 'purpose_of_requirement',
             'pr_type', 'plant', 'end_user_name', 'end_user_department',
-            'ipc_approval_required', 'cipc_approval_required', 'pr_date'
+            'ipc_approval', 'cipc_approval', 'location', 'cr_copy'
         ]
         widgets = {
-            'requester_name': forms.TextInput(attrs={
+            'requester': forms.Select(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter requester name'
             }),
             'department': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -50,18 +49,16 @@ class PRHeaderForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'End user department'
             }),
-            'ipc_approval_required': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'cipc_approval_required': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'pr_date': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date'
-            }),
+            'ipc_approval': forms.Select(attrs={'class': 'form-control'}),
+            'cipc_approval': forms.Select(attrs={'class': 'form-control'}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+            'cr_copy': forms.TextInput(attrs={'class': 'form-control'}),
         }
     
     def clean(self):
         cleaned_data = super().clean()
-        ipc = cleaned_data.get('ipc_approval_required')
-        cipc = cleaned_data.get('cipc_approval_required')
+        ipc = cleaned_data.get('ipc_approval')
+        cipc = cleaned_data.get('cipc_approval')
         
         if not ipc and not cipc:
             raise ValidationError(
@@ -77,7 +74,7 @@ class PRItemForm(forms.ModelForm):
         model = PRItem
         fields = [
             'item_number', 'short_text', 'quantity', 'unit',
-            'unit_price', 'total_value', 'asset_code', 'cost_center', 'gl_code'
+            'unit_price', 'total_value', 'asset_code', 'cost_center', 'gl_account'
         ]
         widgets = {
             'item_number': forms.NumberInput(attrs={
@@ -113,7 +110,7 @@ class PRItemForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Cost center'
             }),
-            'gl_code': forms.TextInput(attrs={
+            'gl_account': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'GL account'
             }),
@@ -184,16 +181,9 @@ class ApprovalForm(forms.ModelForm):
     
     class Meta:
         model = PRApproval
-        fields = ['approval_status', 'comments']
+        fields = ['status', 'comments']
         widgets = {
-            'approval_status': forms.Select(attrs={
-                'class': 'form-control',
-                'choices': [
-                    ('', 'Select action'),
-                    ('APPROVED', 'Approve'),
-                    ('REJECTED', 'Reject'),
-                ]
-            }),
+            'status': forms.Select(attrs={'class': 'form-control'}),
             'comments': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
@@ -203,10 +193,10 @@ class ApprovalForm(forms.ModelForm):
     
     def clean(self):
         cleaned_data = super().clean()
-        status = cleaned_data.get('approval_status')
+        status = cleaned_data.get('status')
         comments = cleaned_data.get('comments')
         
-        if status == 'REJECTED' and not comments:
+        if status == 'rejected' and not comments:
             raise ValidationError(
                 "Comments are required when rejecting a PR."
             )
@@ -240,7 +230,7 @@ class PRFilterForm(forms.Form):
     )
     pr_type = forms.ChoiceField(
         required=False,
-        choices=[('', 'All Types')] + list(PurchaseRequisition.PR_TYPE_CHOICES),
+        choices=[('', 'All Types')],
         widget=forms.Select(attrs={'class': 'form-control'})
     )
     date_from = forms.DateField(
@@ -257,6 +247,12 @@ class PRFilterForm(forms.Form):
             'type': 'date'
         })
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pr_type'].choices = [('', 'All Types')] + [
+            (str(pt.id), pt.name) for pt in PRType.objects.filter(is_active=True).order_by('name')
+        ]
 
 
 class BulkActionForm(forms.Form):

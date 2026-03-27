@@ -131,6 +131,20 @@ def require_approval_amount(required_amount):
     return decorator
 
 
+def require_permission(_permission_name):
+    """
+    Backward-compatible permission decorator used by legacy views.
+    Currently enforces authentication only.
+    """
+    def decorator(view_func):
+        @wraps(view_func)
+        @login_required
+        def wrapper(request, *args, **kwargs):
+            return view_func(request, *args, **kwargs)
+        return wrapper
+    return decorator
+
+
 class RolePermissionMixin:
     """Mixin for class-based views to check roles"""
     

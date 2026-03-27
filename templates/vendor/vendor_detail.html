@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Vendor Details{% endblock %}
+{% block content %}
+<div class="card"><h1>{{ vendor.name }}</h1>
+<p><strong>Email:</strong> {{ vendor.email }}</p><p><strong>Location:</strong> {{ vendor.location }}</p>
+<div class="actions"><a class="btn btn-secondary" href="{% url 'vendor:vendor-edit' pk=vendor.pk %}">Edit</a><a class="btn btn-danger" href="{% url 'vendor:vendor-delete' pk=vendor.pk %}">Delete</a><a class="btn" href="{% url 'vendor:quotations' vendor_pk=vendor.pk %}">Quotations</a></div>
+</div>
+<div class="card"><h2>Contacts</h2><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead><tbody>{% for c in contacts %}<tr><td>{{ c.name }}</td><td>{{ c.email }}</td><td>{{ c.location|default:c.phone }}</td></tr>{% empty %}<tr><td colspan="3">No contacts.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

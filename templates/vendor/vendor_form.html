@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Vendor Form{% endblock %}
+{% block content %}
+<div class="card"><h1>{{ view.object|yesno:'Edit Vendor,Create Vendor' }}</h1>
+<form method="post">{% csrf_token %}
+{{ form.as_p }}
+<h2>Contacts</h2>
+{{ contact_formset.management_form }}
+{% for cf in contact_formset %}<div class="card">{{ cf.as_p }}</div>{% endfor %}
+<button class="btn" type="submit">Save Vendor</button></form></div>
+{% endblock %}

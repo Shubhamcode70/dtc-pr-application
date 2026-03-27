@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Approvals Queue{% endblock %}
+{% block content %}
+<div class="card"><h1>Approvals Queue</h1><p>Pending approvals: {{ pending_count }}</p></div>
+<div class="card"><table><thead><tr><th>PR</th><th>Level</th><th>Assigned</th></tr></thead><tbody>{% for approval in pending_approvals %}<tr><td>{{ approval.purchase_requisition.pr_id|default:approval.pr.pr_number }}</td><td>{{ approval.approval_level }}</td><td>{{ approval.created_at|default:approval.assigned_date }}</td></tr>{% empty %}<tr><td colspan="3">No pending approvals.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

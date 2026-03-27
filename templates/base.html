@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}DTC PR Application{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f5f6f8; }
+        header { background: #1f2937; color: #fff; padding: 12px 20px; }
+        nav a { color: #fff; margin-right: 16px; text-decoration: none; font-size: 14px; }
+        main { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
+        .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.1); padding: 16px; margin-bottom: 16px; }
+        .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+        .stat { background: #eef2ff; border-radius: 8px; padding: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #e5e7eb; padding: 8px; text-align: left; }
+        .btn { display: inline-block; border: 0; border-radius: 6px; background: #2563eb; color: #fff; padding: 8px 12px; text-decoration: none; cursor: pointer; }
+        .btn-secondary { background: #4b5563; }
+        .btn-danger { background: #b91c1c; }
+        .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        input, select, textarea { width: 100%; padding: 8px; box-sizing: border-box; margin-top: 4px; margin-bottom: 12px; }
+        .messages { list-style: none; padding: 0; }
+        .messages li { padding: 8px 10px; border-radius: 6px; margin-bottom: 8px; }
+        .success { background: #dcfce7; }
+        .error { background: #fee2e2; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<header>
+    <strong>DTC PR Application</strong>
+    <nav>
+        <a href="/api/dashboard/">Dashboard</a>
+        <a href="/api/pr/">PRs</a>
+        <a href="/api/vendor/">Vendors</a>
+    </nav>
+</header>
+<main>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>
