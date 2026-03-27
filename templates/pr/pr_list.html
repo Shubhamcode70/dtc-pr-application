@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Purchase Requisitions{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Purchase Requisitions</h1>
+  <div class="actions"><a class="btn" href="/api/pr/create/">Create PR</a></div>
+</div>
+<div class="grid">
+  <div class="stat">Total: {{ total_prs }}</div>
+  <div class="stat">Pending: {{ pending_prs }}</div>
+  <div class="stat">Approved: {{ approved_prs }}</div>
+  <div class="stat">Value: {{ total_value }}</div>
+</div>
+<div class="card">
+  <form method="get">{{ filter_form.as_p }}<button class="btn" type="submit">Filter</button></form>
+</div>
+<div class="card">
+<table>
+  <thead><tr><th>PR</th><th>Requester</th><th>Status</th><th>Date</th><th></th></tr></thead>
+  <tbody>
+    {% for pr in prs %}
+      <tr>
+        <td>{{ pr.pr_id|default:pr.pr_number }}</td>
+        <td>{{ pr.requester_name|default:pr.requester }}</td>
+        <td>{{ pr.status }}</td>
+        <td>{{ pr.pr_date|default:pr.request_date }}</td>
+        <td><a class="btn btn-secondary" href="{% url 'pr:pr-detail' pr_id=pr.pr_id %}">View</a></td>
+      </tr>
+    {% empty %}<tr><td colspan="5">No PRs found.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

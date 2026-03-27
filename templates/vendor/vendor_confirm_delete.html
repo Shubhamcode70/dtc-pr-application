@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Delete Vendor{% endblock %}
+{% block content %}
+<div class="card"><h1>Delete {{ object.name }}?</h1>
+<form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Confirm Delete</button> <a class="btn btn-secondary" href="{% url 'vendor:vendor-detail' pk=object.pk %}">Cancel</a></form>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}PR Form{% endblock %}
+{% block extra_head %}
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<script>
+function addFormRow() {
+  const total = document.getElementById('id_form-TOTAL_FORMS');
+  const idx = parseInt(total.value, 10);
+  const container = document.getElementById('line-items');
+  const template = document.getElementById('empty-form').innerHTML.replace(/__prefix__/g, idx);
+  container.insertAdjacentHTML('beforeend', template);
+  total.value = idx + 1;
+}
+</script>
+{% endblock %}
+{% block content %}
+<div class="card"><h1>{{ view.object|yesno:'Edit PR,Create PR' }}</h1>
+<form method="post">{% csrf_token %}
+  {{ form.as_p }}
+  <h2>Line Items</h2>
+  {{ formset.management_form }}
+  <div id="line-items">
+    {% for item_form in formset %}
+      <div class="card">{{ item_form.as_p }}</div>
+    {% endfor %}
+  </div>
+  <template id="empty-form"><div class="card">{{ formset.empty_form.as_p|escapejs }}</div></template>
+  <button type="button" class="btn btn-secondary" onclick="addFormRow()">Add Item</button>
+  <button type="submit" class="btn">Save PR</button>
+</form>
+</div>
+{% endblock %}

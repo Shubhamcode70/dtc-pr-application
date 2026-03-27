@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Delete Attachment{% endblock %}
+{% block content %}
+<div class="card"><h1>Delete attachment?</h1><p>{{ object.file.name|default:object.original_filename }}</p>
+<form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Confirm Delete</button></form></div>
+{% endblock %}
