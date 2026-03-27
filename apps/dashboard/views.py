@@ -269,11 +269,9 @@ class ReportsView(LoginRequiredMixin, TemplateView):
         
         context['approver_stats'] = list(approvers)
         
-        # Vendor statistics
-        context['top_vendors'] = Attachment.objects.filter(
-            attachment_type='QUOTATION'
-        ).values('created_by__last_name').annotate(
-            count=Count('id')
-        ).order_by('-count')[:10]
+        # Top uploaders by attachment count (proxy metric for vendor documentation volume)
+        context['top_vendors'] = Attachment.objects.values(
+            'uploaded_by__first_name', 'uploaded_by__last_name'
+        ).annotate(count=Count('id')).order_by('-count')[:10]
         
         return context
