@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="card"><h1>Reports</h1></div>
+<div class="card"><h2>PR Aging</h2><table><thead><tr><th>PR</th><th>Requester</th><th>Days Pending</th><th>Value</th></tr></thead><tbody>{% for row in aging_report %}<tr><td>{{ row.pr_id }}</td><td>{{ row.requester }}</td><td>{{ row.days_pending }}</td><td>{{ row.value }}</td></tr>{% empty %}<tr><td colspan="4">No pending PRs.</td></tr>{% endfor %}</tbody></table></div>
+<div class="card"><h2>Approver Stats</h2><table><thead><tr><th>Approver</th><th>Total</th><th>Approved</th><th>Rejected</th><th>Pending</th></tr></thead><tbody>{% for a in approver_stats %}<tr><td>{{ a.approver__first_name }} {{ a.approver__last_name }}</td><td>{{ a.total }}</td><td>{{ a.approved }}</td><td>{{ a.rejected }}</td><td>{{ a.pending }}</td></tr>{% empty %}<tr><td colspan="5">No data.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

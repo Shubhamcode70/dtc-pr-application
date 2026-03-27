@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}PR Details{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>PR {{ pr.pr_id|default:pr.pr_number }}</h1>
+  <p><strong>Purpose:</strong> {{ pr.purpose_of_requirement }}</p>
+  <p><strong>Status:</strong> {{ pr.status }}</p>
+  <div class="actions">
+    <a class="btn btn-secondary" href="{% url 'pr:pr-edit' pr_id=pr.pr_id %}">Edit</a>
+    <form method="post" action="{% url 'pr:pr-submit' pr_id=pr.pr_id %}">{% csrf_token %}<button class="btn" type="submit">Submit for Approval</button></form>
+    <a class="btn" href="{% url 'pr:pr-export' pr_id=pr.pr_id %}">Export Excel</a>
+  </div>
+</div>
+<div class="card"><h2>Line Items</h2>
+<table><thead><tr><th>#</th><th>Description</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead>
+<tbody>{% for item in items %}<tr><td>{{ item.item_number }}</td><td>{{ item.short_text }}</td><td>{{ item.quantity }}</td><td>{{ item.unit_price }}</td><td>{{ item.total_value }}</td></tr>{% empty %}<tr><td colspan="5">No items.</td></tr>{% endfor %}</tbody></table>
+</div>
+<div class="card"><h2>Approvals</h2>
+<table><thead><tr><th>Approver</th><th>Status</th><th>Comments</th></tr></thead><tbody>{% for a in approvals %}<tr><td>{{ a.approver|default:a.assigned_to }}</td><td>{{ a.approval_status|default:a.status }}</td><td>{{ a.comments }}</td></tr>{% empty %}<tr><td colspan="3">No approvals yet.</td></tr>{% endfor %}</tbody></table>
+{% if can_approve %}
+<form method="post" action="{% url 'pr:pr-approve' pr_id=pr.pr_id %}">{% csrf_token %}{{ approval_form.as_p }}<button class="btn" type="submit">Submit Decision</button></form>
+{% endif %}
+</div>
+{% endblock %}
