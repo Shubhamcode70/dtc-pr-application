@@ -28,7 +28,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             logger.info(f"User {username} logged in successfully")
-            return redirect('dashboard:index')
+            return redirect('dashboard:dashboard')
         else:
             logger.warning(f"Failed login attempt for user {username}")
             return render(request, 'auth/login.html', {
@@ -43,7 +43,7 @@ def logout_view(request):
     username = request.user.username if request.user.is_authenticated else 'Unknown'
     logout(request)
     logger.info(f"User {username} logged out")
-    return redirect('login')
+    return redirect('auth:login')
 
 
 @login_required
@@ -91,7 +91,7 @@ def user_edit_view(request, user_id):
         user_profile.save()
         
         logger.info(f"Admin updated user {user.username} profile")
-        return redirect('user-management')
+        return redirect('auth:management')
     
     return render(request, 'users/edit.html', {
         'user': user,

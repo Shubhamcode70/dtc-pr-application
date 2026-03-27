@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}User Management{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>User Management</h1>
+  <table>
+    <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Approver</th><th>Limit</th><th></th></tr></thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.get_full_name|default:u.username }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.profile.role.name }}</td>
+        <td>{{ u.profile.is_approver|yesno:"Yes,No" }}</td>
+        <td>{{ u.profile.approval_limit }}</td>
+        <td><a class="btn btn-secondary" href="{% url 'auth:edit' user_id=u.id %}">Edit</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="6">No users found.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
