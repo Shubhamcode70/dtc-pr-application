@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Audit Dashboard{% endblock %}
+{% block content %}
+<div class="card"><h1>Audit Dashboard</h1><p>File uploads: {{ file_uploads }} | Downloads: {{ file_downloads }}</p></div>
+<div class="card"><h2>Recent Audit Logs</h2><table><thead><tr><th>When</th><th>User</th><th>Action</th><th>Description</th></tr></thead><tbody>{% for log in recent_audits %}<tr><td>{{ log.created_at }}</td><td>{{ log.user }}</td><td>{{ log.action }}</td><td>{{ log.description }}</td></tr>{% empty %}<tr><td colspan="4">No logs.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

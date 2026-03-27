@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="card"><h1>Dashboard</h1></div>
+<div class="grid">
+  <div class="stat">Total PRs: {{ total_prs }}</div>
+  <div class="stat">Pending: {{ pending_approval }}</div>
+  <div class="stat">Approved: {{ approved }}</div>
+  <div class="stat">Rejected: {{ rejected }}</div>
+</div>
+<div class="card"><h2>Recent PRs</h2><table><thead><tr><th>PR</th><th>Status</th><th>Created</th></tr></thead><tbody>{% for pr in recent_prs %}<tr><td>{{ pr.pr_id|default:pr.pr_number }}</td><td>{{ pr.status }}</td><td>{{ pr.created_at }}</td></tr>{% empty %}<tr><td colspan="3">No PRs.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}
